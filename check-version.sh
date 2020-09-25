@@ -14,6 +14,7 @@ while read line; do
     line=${line%.jar*}
 
     if [[ $line == *"-SNAPSHOT"* ]]; then
+        line=${line/-SNAPSHOT/}
         echo $line
     fi
 done < $CHANGE_FILE
