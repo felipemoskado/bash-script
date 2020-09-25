@@ -3,18 +3,15 @@
 BASE_DIR="/home/felipe/Downloads/teste"
 CHANGE_FILE="$BASE_DIR/patch-10.14b84/changed_files.txt"
 
-if [ ! -e $CHANGE_FILE ]
-then
-    echo "Arquivo inexistente."
-fi
+source functions.sh
 
-#Lê o arquivo
-while read line; do
-    #Remove todos caracteres após o ".jar"
-    line=${line%.jar*}
-
-    if [[ $line == *"-SNAPSHOT"* ]]; then
-        line=${line/-SNAPSHOT/}
-        echo $line
+function run() {
+    if ! exists_file $CHANGE_FILE; then
+        echo "Arquivo não existe"
+        return
     fi
-done < $CHANGE_FILE
+    
+    read_file $CHANGE_FILE
+}
+
+run
