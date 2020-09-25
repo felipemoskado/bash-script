@@ -10,6 +10,6 @@ fi
 
 #Lê o arquivo
 while read line; do
-    echo line
-
+    #Remove todos caracteres após o ".jar"
+    line=${line%.jar*}
 done < $CHANGE_FILE
