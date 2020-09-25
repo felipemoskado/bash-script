@@ -12,4 +12,8 @@ fi
 while read line; do
     #Remove todos caracteres após o ".jar"
     line=${line%.jar*}
+
+    if [[ $line == *"-SNAPSHOT"* ]]; then
+        echo $line
+    fi
 done < $CHANGE_FILE
