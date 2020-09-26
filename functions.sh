@@ -31,13 +31,33 @@ function replace() {
 }
 
 function read_file() {
+    local version_pattern='([[:digit:]]+\.)+(([[:digit:]]+)|(\w+))(-\w+)*(\.jar$)|([[:digit:]]+\.jar$)'
     local snapshot="-SNAPSHOT"
+    local resultError=""
+    
     while read line; do 
-        line=$(get_string_until $line .jar)
+        local version=""
+        local name=""
+        line=$(get_string_until $line :)
 
         if contains $line $snapshot; then
             line=$(replace $line $snapshot "")
-            echo $line
         fi
+
+        if [[ $line =~ $version_pattern ]]; then
+            version=$(replace $BASH_REMATCH .jar)
+            name=$(replace $line "-$BASH_REMATCH" "")
+        else
+            resultError="${resultError}line=$line / name=$name / version=$version \\n"
+        fi
+
+        test $(find /home/felipe/Downloads/teste/ -name $name)
     done < $1
+
+    echo -e $resultError >> result-error.txt
+}
+
+function test() {
+    
+    echo $#
 }
