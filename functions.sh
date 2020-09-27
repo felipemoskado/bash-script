@@ -51,13 +51,56 @@ function read_file() {
             resultError="${resultError}line=$line / name=$name / version=$version \\n"
         fi
 
-        test $(find /home/felipe/Downloads/teste/ -name $name)
-    done < $1
+        local findResult=$(find /home/felipe/Downloads/teste/ -name $name)
 
-    echo -e $resultError >> result-error.txt
+        if check_version $findResult $version; then
+            echo "Achou. - $name - $version"
+        else
+            echo "Não achou - $name - $version"
+        fi
+    done
 }
 
-function test() {
+function has_version() {
+    local argsCountMinusVersion=$(($#-1))
+    local allArgsButTheLast=${@:1:$argsCountMinusVersion}
+    local version="${!#}"
     
-    echo $#
+    if [[ $argsCountMinusVersion == 1 ]]; then
+        if [[ $1 == $version ]]; then
+            return 0
+        else
+            return 1
+        fi
+    else
+        for argVersion in $@; do
+            if [[ $argVersion == $version ]]; then
+                return 0
+            fi
+        done
+
+        return 1
+    fi
+}
+
+function check_version() {
+    local argsCountMinusVersion=$(($#-1))
+    local version="${!#}"
+
+    if [[ $argsCountMinusVersion == 0 ]]; then
+        return 1
+    fi
+
+    local allArgsButTheLast=${@:1:$argsCountMinusVersion}
+    local hasVersion=1
+
+    for findCommand in $allArgsButTheLast; do
+        local resultListCommand=$(ls $findCommand)
+
+        if has_version $resultListCommand $version; then
+            return 0
+        fi
+    done
+
+    return 1
 }
