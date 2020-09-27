@@ -25,9 +25,9 @@ function contains() {
 
 function replace() {
     local text=$1
-    local replacementFrom=$2
-    local replacementTo=$3
-    echo ${text/$replacementFrom/$replacementTo}
+    local from=$2
+    local to=$3
+    echo ${text/$from/$to}
 }
 
 function read_file() {
@@ -35,7 +35,7 @@ function read_file() {
     local snapshot="-SNAPSHOT"
     local resultError=""
     
-    while read line; do 
+    cat $1 | while read line; do
         local version=""
         local name=""
         line=$(get_string_until $line :)
