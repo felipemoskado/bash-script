@@ -34,8 +34,10 @@ function read_file() {
     local version_pattern='([[:digit:]]+\.)+(([[:digit:]]+)|(\w+))(-\w+)*(\.jar$)|([[:digit:]]+\.jar$)'
     local snapshot="-SNAPSHOT"
     local resultError=""
+    local foundLib=""
+    local libNotFound=""
     
-    cat $1 | while read line; do
+    while read line; do
         local version=""
         local name=""
         line=$(get_string_until $line :)
@@ -53,12 +55,38 @@ function read_file() {
 
         local findResult=$(find /home/felipe/Downloads/teste/ -name $name)
 
+        echo "Verificando a versão da lib: $name"
+
         if check_version $findResult $version; then
-            echo "Achou. - $name - $version"
+            foundLib="${foundLib}name=$name / version=$version\\n"
         else
-            echo "Não achou - $name - $version"
+            libNotFound="${libNotFound}name=$name / version=$version\\n"
         fi
-    done
+    done < $1
+
+    echo -e $resultError >> result-error.txt
+    echo -e $foundLib >> found-lib.txt
+    echo -e $libNotFound >> lib-not-found.txt
+}
+
+function process_file() {
+    local isFinished=0
+    local isProcessing=0
+
+    echo "PROCESSANDO ARQUIVO..."
+    echo -e "----------------------\\n"
+
+    read_file $1
+
+    echo -e "\\n-------------------"
+    echo "ARQUIVO PROCESSADO!"
+    echo "
+Arquivos gerados:
+
+- result-error.txt
+- found-lib.txt
+- lib-not-found.txt
+"
 }
 
 function has_version() {

@@ -12,7 +12,7 @@ function run() {
         return
     fi
     
-    read_file $CHANGE_FILE
+    process_file $CHANGE_FILE
 }
 
 run
